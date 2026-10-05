@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Helpdesk Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- 1. AUTHENTICATION PAGE -->
+    <div id="auth-page" class="page-container auth-wrapper active">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo">
+                    <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    <span>Campus<span>Help</span></span>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Login or register to manage support tickets</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label for="login-username"><i class="fa-regular fa-user"></i> Username</label>
+                    <input type="text" id="login-username" placeholder="e.g. harip" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password"><i class="fa-regular fa-key"></i> Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="login-btn">
+                    <span>Sign In</span> <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+                <div class="auth-toggle">
+                    Don't have an account? <a href="#" id="to-register">Register here</a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="reg-username"><i class="fa-regular fa-user"></i> Username</label>
+                        <input type="text" id="reg-username" placeholder="harip" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-email"><i class="fa-regular fa-envelope"></i> Email</label>
+                        <input type="email" id="reg-email" placeholder="harip@campus.edu" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="reg-fullname"><i class="fa-regular fa-address-card"></i> Full Name</label>
+                        <input type="text" id="reg-fullname" placeholder="Hari Prasad" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-role"><i class="fa-regular fa-users-gear"></i> Role</label>
+                        <select id="reg-role" required>
+                            <option value="STUDENT">Student</option>
+                            <option value="FACULTY">Faculty / Staff</option>
+                            <option value="AGENT">Helpdesk Agent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="reg-password"><i class="fa-regular fa-key"></i> Password</label>
+                        <input type="password" id="reg-password" placeholder="••••••••" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-dept"><i class="fa-regular fa-building"></i> Department (Optional)</label>
+                        <input type="text" id="reg-dept" placeholder="Computer Science">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="register-btn">
+                    <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+                </button>
+                <div class="auth-toggle">
+                    Already have an account? <a href="#" id="to-login">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APP DASHBOARD -->
+    <div id="main-dashboard" class="page-container dashboard-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <span>Campus<span>Help</span></span>
+            </div>
+            
+            <div class="user-profile-summary">
+                <div class="avatar" id="user-avatar-initials">U</div>
+                <div class="user-info">
+                    <h4 id="user-display-name">Loading...</h4>
+                    <span id="user-display-role" class="role-badge">Loading...</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" id="nav-tickets">
+                    <i class="fa-regular fa-ticket"></i> Tickets List
+                </a>
+                <a href="#" class="menu-item" id="nav-create-ticket-btn">
+                    <i class="fa-regular fa-square-plus"></i> File New Ticket
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-danger btn-block">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-title">
+                    <h1 id="dashboard-title">Support Dashboard</h1>
+                    <p id="dashboard-subtitle">Monitor and update your active requests</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="open-create-modal-btn">
+                        <i class="fa-solid fa-plus"></i> Create Ticket
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Overview Grid -->
+            <section class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-icon"><i class="fa-regular fa-folders"></i></div>
+                    <div class="stat-content">
+                        <h3 id="stat-total">0</h3>
+                        <p>Total Tickets</p>
+                    </div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-card open">
+                    <div class="stat-icon"><i class="fa-regular fa-envelope-open"></i></div>
+                    <div class="stat-content">
+                        <h3 id="stat-open">0</h3>
+                        <p>Open / New</p>
+                    </div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-card pending">
+                    <div class="stat-icon"><i class="fa-regular fa-spinner fa-spin-slow"></i></div>
+                    <div class="stat-content">
+                        <h3 id="stat-pending">0</h3>
+                        <p>In Progress</p>
+                    </div>
+                    <div class="stat-glow"></div>
+                </div>
+                <div class="stat-card resolved">
+                    <div class="stat-icon"><i class="fa-regular fa-circle-check"></i></div>
+                    <div class="stat-content">
+                        <h3 id="stat-resolved">0</h3>
+                        <p>Resolved / Closed</p>
+                    </div>
+                    <div class="stat-glow"></div>
+                </div>
+            </section>
+
+            <!-- Tickets Filtering & Listing Section -->
+            <section class="tickets-section card">
+                <div class="section-header">
+                    <div class="filters-bar">
+                        <div class="search-input">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="filter-search" placeholder="Search by title or ID...">
+                        </div>
+                        <div class="filter-dropdowns">
+                            <select id="filter-category">
+                                <option value="ALL">All Categories</option>
+                                <option value="IT">IT Support</option>
+                                <option value="ACADEMICS">Academics</option>
+                                <option value="FACILITIES">Facilities</option>
+                                <option value="FINANCE">Finance</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="ALL">All Statuses</option>
+                                <option value="OPEN">Open</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="RESOLVED">Resolved</option>
+                                <option value="CLOSED">Closed</option>
+                            </select>
+                            <select id="filter-priority">
+                                <option value="ALL">All Priorities</option>
+                                <option value="LOW">Low</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HIGH">High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets List / Table -->
+                <div class="table-container">
+                    <table class="tickets-table" id="tickets-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Title & Category</th>
+                                <th>Created By</th>
+                                <th>Assigned To</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-list-body">
+                            <!-- Populated dynamically via JS -->
+                            <tr>
+                                <td colspan="8" class="text-center">Loading tickets...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 3. TICKET DETAIL OVERLAY / SLIDE-IN -->
+    <div id="ticket-detail-overlay" class="modal-overlay">
+        <div class="detail-panel">
+            <div class="detail-header">
+                <div class="header-left">
+                    <span id="detail-ticket-id" class="id-badge">#TKT-001</span>
+                    <h2 id="detail-ticket-title">Ticket Title Description</h2>
+                </div>
+                <button class="close-btn" id="close-detail-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="detail-body">
+                <!-- Info Section -->
+                <div class="info-sidebar">
+                    <div class="info-group">
+                        <label>Category</label>
+                        <div id="detail-category" class="info-value category-badge">IT Support</div>
+                    </div>
+                    <div class="info-group">
+                        <label>Created By</label>
+                        <div class="info-value user-card">
+                            <div class="user-avatar" id="detail-creator-avatar">C</div>
+                            <div class="user-details">
+                                <span id="detail-creator-name">John Doe</span>
+                                <small id="detail-creator-dept">Computer Science</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <label>Date Submitted</label>
+                        <div id="detail-created-at" class="info-value">Aug 04, 2026 12:30 PM</div>
+                    </div>
+                    
+                    <hr class="divider">
+
+                    <!-- Actions (Dynamically configured based on role) -->
+                    <div class="info-group agent-only-action">
+                        <label for="detail-status">Status</label>
+                        <select id="detail-status" class="form-control">
+                            <option value="OPEN">Open</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="RESOLVED">Resolved</option>
+                            <option value="CLOSED">Closed</option>
+                        </select>
+                    </div>
+                    <div class="info-group student-only-action">
+                        <label>Status</label>
+                        <div id="detail-status-badge" class="info-value status-badge open">Open</div>
+                        <button class="btn btn-danger btn-block btn-sm margin-top-sm" id="student-close-btn">
+                            Close Ticket
+                        </button>
+                    </div>
+
+                    <div class="info-group agent-only-action">
+                        <label for="detail-priority">Priority</label>
+                        <select id="detail-priority" class="form-control">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
+
+                    <div class="info-group agent-only-action">
+                        <label for="detail-assignee">Assigned Agent</label>
+                        <select id="detail-assignee" class="form-control">
+                            <!-- Populated dynamically via JS -->
+                        </select>
+                    </div>
+
+                    <div class="info-group student-only-action">
+                        <label>Assigned To</label>
+                        <div id="detail-assignee-text" class="info-value">Unassigned</div>
+                    </div>
+                </div>
+
+                <!-- Chat / Conversation Section -->
+                <div class="conversation-panel">
+                    <div class="description-bubble card">
+                        <h4>Description</h4>
+                        <p id="detail-description">Full ticket description goes here...</p>
+                    </div>
+
+                    <div class="comments-section">
+                        <h3>Conversation History</h3>
+                        <div class="comments-timeline" id="comments-timeline">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Add Comment Form -->
+                    <form id="comment-form" class="comment-input-area">
+                        <textarea id="comment-content" placeholder="Type a message or update..." rows="3" required></textarea>
+                        <button type="submit" class="btn btn-primary" id="send-comment-btn">
+                            <span>Send</span> <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. CREATE TICKET MODAL -->
+    <div id="create-ticket-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>File a New Support Ticket</h2>
+                <button class="close-btn" id="close-create-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="create-ticket-form">
+                <div class="input-group">
+                    <label for="ticket-title">Problem Summary / Title</label>
+                    <input type="text" id="ticket-title" placeholder="e.g. Cannot connect to campus Wi-Fi in Library" required>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="ticket-category">Category</label>
+                        <select id="ticket-category" required>
+                            <option value="IT">IT Support & Network</option>
+                            <option value="ACADEMICS">Academics & Registration</option>
+                            <option value="FACILITIES">Facilities & Maintenance</option>
+                            <option value="FINANCE">Finance & Tuition</option>
+                            <option value="OTHER">Other Issues</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="ticket-priority">Initial Priority</label>
+                        <select id="ticket-priority" required>
+                            <option value="LOW">Low (General Inquiry)</option>
+                            <option value="MEDIUM" selected>Medium (Standard Problem)</option>
+                            <option value="HIGH">High (Urgent / Disruption)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="ticket-description">Describe the issue in detail</label>
+                    <textarea id="ticket-description" rows="5" placeholder="Please provide details, error messages, and room/location numbers if applicable..." required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-create-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submit-ticket-btn">
+                        Submit Ticket <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS Script -->
+    <script src="app.js"></script>
+</body>
+</html>
